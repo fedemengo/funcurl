@@ -2,15 +2,25 @@
 
 class FuncURL {
     constructor(config = {}) {
-        if (config) {
-        } else {
-            this.root = {};
-        }
         this.root = {};
+        
+        if (config) {
+            Object.keys(config).forEach(route => Object.keys(config[route]).forEach(method => this.add(route, method, config[route][method])))
+            //forEach(config, (methods, route) => forEach(methods, (func, method) => this.add(route, method, func)))
+        }
     }
 
-    match(url, method) {
-        const paths = url.split("/").slice(1);
+    _getPaths(url) {
+        if(url === '/'){
+            return url
+        }
+
+        return url.split("/").slice(1);
+    }
+
+    match(url, _method) {
+        const method = _method.toUpperCase()
+        const paths = this._getPaths(url);
         let p = this.root;
 
         for (let path of paths) {
@@ -26,8 +36,9 @@ class FuncURL {
         return p.hasOwnProperty(method);
     }
 
-    get(url, method) {
-        const paths = url.split("/").slice(1);
+    get(url, _method) {
+        const method = _method.toUpperCase()
+        const paths = this._getPaths(url);
         let p = this.root;
         const data = {};
 
@@ -38,19 +49,20 @@ class FuncURL {
                     data[name] = path;
                     path = "*";
                 } else {
-                    throw new Error("URL is not defined");
+                    throw new Error(`URL ${url} is not defined`);
                 }
             }
             p = p[path];
         }
         if (p.hasOwnProperty(method) === false) {
-            throw new Error("URL is not defined");
+            throw new Error(`URL ${url} is not defined`);
         }
         return { func: p[method], params: data };
     }
 
-    add(url, method, func) {
-        const paths = url.split("/").slice(1);
+    add(url, _method, func) {
+        const method = _method.toUpperCase()
+        const paths = this._getPaths(url);
         let p = this.root;
         let param = "";
 
@@ -61,6 +73,7 @@ class FuncURL {
                     path = "*";
                     break;
                 case "":
+
                     path = "$";
                     break;
             }
@@ -73,7 +86,7 @@ class FuncURL {
             p = p[path];
         }
         if (p.hasOwnProperty(method)) {
-            throw new Error("URL already exists");
+            throw new Error(`URL ${url} already exists`);
         }
         p[method] = func;
     }
