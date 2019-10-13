@@ -45,7 +45,7 @@ class FuncURL {
         for (let path of paths) {
             if (p.hasOwnProperty(path) === false) {
                 if (p.hasOwnProperty("*")) {
-                    const name = p["*"]["__name"];
+                    const name = p["*"]["__name"][method];
                     data[name] = path;
                     path = "*";
                 } else {
@@ -81,7 +81,10 @@ class FuncURL {
                 p[path] = {};
             }
             if (path === "*") {
-                p[path]["__name"] = param.substring(1);
+                if(!p[path]["__name"]) {
+                    p[path]["__name"] = {}
+                }
+                p[path]["__name"][method] = param.substring(1);
             }
             p = p[path];
         }
@@ -89,10 +92,6 @@ class FuncURL {
             throw new Error(`URL ${url} already exists`);
         }
         p[method] = func;
-    }
-
-    setBase(url) {
-        this.setBase = url;
     }
 }
 
