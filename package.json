@@ -1,6 +1,6 @@
 {
-    "name": "funcurl",
-    "version": "2.1.0",
+    "name": "@fedemengo/funcurl",
+    "version": "2.1.1",
     "description": "Flexible middleware for executing functions on matched urls ",
     "main": "index.js",
     "scripts": {
@@ -26,5 +26,8 @@
         "assert": "^2.0.0",
         "lodash": "^4.17.15",
         "mocha": "^6.2.1"
-    }
+    },
+	"publishConfig": { 
+		"registry": "https://npm.pkg.github.com/" 
+	}
 }
